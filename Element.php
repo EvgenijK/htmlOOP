@@ -90,6 +90,14 @@ class Element
 
     }
 
+    /**
+     * @param string $value
+     */
+    protected function set_name(string $value)
+    {
+        $this->name = $value;
+    }
+
     public function set_index(string $value)
     {
         // todo добавить проверку
@@ -127,5 +135,7 @@ class Element
     {
         return TRUE;
     }
+
+
 
 }
