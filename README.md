@@ -1,2 +1,2 @@
 # htmlOOP
-Some classes for generating HTML in OOP style
+Some PHP classes for generating HTML in OOP style
