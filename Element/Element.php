@@ -1,6 +1,8 @@
 <?php
 
-namespace htmlOOP;
+namespace htmlOOP\Element;
+
+use htmlOOP\ElementCollection\ElementCollection;
 
 class Element implements \ArrayAccess
 {
@@ -15,7 +17,7 @@ class Element implements \ArrayAccess
 	protected $parent;
 
 	/**
-	 * @var Attribute[] $attributes
+	 * @var array $attributes
 	 */
 	protected $attributes;
 

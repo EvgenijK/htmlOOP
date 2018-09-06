@@ -6,14 +6,15 @@
  * Time: 15:01
  */
 
-namespace htmlOOP;
+namespace htmlOOP\ElementCollection;
 
+use htmlOOP\Element\Element;
 
 class ElementCollection implements \ArrayAccess
 {
 
 	/**
-	 * @var array elements
+	 * @var Element[] elements
 	 */
 	protected $elements;
 
