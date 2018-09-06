@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace htmlOOP;
 
@@ -7,140 +7,64 @@ class Element
 	/**
 	 * @var string name
 	 */
-	private $name;
+	protected $name;
 
 	/**
 	 * @var Element parent
 	 */
-	private $parent;
+	protected $parent;
 
 	/**
-	 * @var string index
+	 * @var string[] attributes
 	 */
-	private $index;
-
-	/**
-	 * @var array attributes
-	 */
-	private $attributes;
+	protected $attributes;
 
 	/**
 	 * @var ElementCollection children
 	 */
-	private $children;
-
-	/**
-	 * @var ElementCollection indexed_elements
-	 */
-	private $indexed_elements;
+	protected $children;
 
 	/**
 	 * Element constructor.
 	 *
-	 * @param Element|string $values
+	 * @param string[] $attributes
 	 */
-	public function __construct(...$values)
+	public function __construct(array $attributes = [])
 	{
-		$tmp_children = new ElementCollection();
-		$tmp_attributes = [];
 
-		foreach ($values as $index => $value)
+		foreach ($attributes as $attribute => $value)
 		{
-			if ($value instanceof Element)
-			{
-
-				if (is_string($index) && $this->check_index($index))
-				{
-					$value->set_index($index);
-				}
-
-				$tmp_children[] = $value;
-			} elseif ($value instanceof ElementCollection)
-			{
-				$tmp_children->merge_collection($value);
-			} elseif (is_string($value) || is_numeric($value))
-			{
-				if (is_string($index))
-				{
-					// добавляется аттрибут
-
-					if (key_exists($index, $this->attributes))
-					{
-						// todo throw exception
-					}
-
-					$tmp_attributes[$index] = $value;
-
-				} elseif (is_numeric($index) && (is_string($value) || is_numeric($value)))
-				{
-					// добавляется просто текст в значение элемента
-					$tmp_children[] = new Element($value);
-				} else
-				{
-					// todo throw exception
-				}
-			}
+			$this->setAttribute($attribute, $value);
 		}
 
-		foreach ($tmp_children->get_elements() as $element)
-		{
-			$this->add_child($element);
-		}
-
-		foreach ($tmp_attributes as $attribute => $value)
-		{
-			$this->set_attribute($attribute, $value);
-		}
-
-
+		$this->children = new ElementCollection();
 	}
 
 	/**
 	 * @param string $value
 	 */
-	protected function set_name(string $value)
+	public function setName(string $value)
 	{
 		$this->name = $value;
 	}
 
-	public function set_index(string $value)
+	public function append(Element $element)
 	{
-		// todo добавить проверку
-		if (!$this->check_index($value))
-		{
-			// todo throw exception
-		}
-
-		$this->index = $value;
-		$this->indexed_elements->add_element($this);
+		$this->children->add_element($element);
+		$element->setParent($this);
 	}
 
-	public function get_index()
+	public function setAttribute(string $attribute, $value)
 	{
-		return $this->index;
-	}
-
-
-	public function add_child(Element $element)
-	{
-		// todo
-	}
-
-	public function set_attribute(string $attribute, $value)
-	{
-		// todo проверка входящий данных
-		$this->attributes[$attribute] = $value;
+		$this->attributes[$attribute] = (string) $value;
 	}
 
 	/**
-	 * @param string $index
-	 *
-	 * @return bool
+	 * @param Element $parent
 	 */
-	private function check_index(string $index)
+	protected function setParent(Element $parent)
 	{
-		return TRUE;
+		$this->parent = $parent;
 	}
-
 
 }
