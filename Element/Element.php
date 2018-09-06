@@ -101,6 +101,14 @@ class Element implements \ArrayAccess
 	}
 
 	/**
+	 * @param int $offset
+	 */
+	public function unsetChild(int $offset)
+	{
+		unset($this->children[$offset]);
+	}
+
+	/**
 	 * Whether a offset exists
 	 * @link https://php.net/manual/en/arrayaccess.offsetexists.php
 	 * @param mixed $offset <p>
@@ -163,6 +171,6 @@ class Element implements \ArrayAccess
 	 */
 	public function offsetUnset($offset)
 	{
-		unset($this->children[$offset]);
+		$this->unsetChild($offset);
 	}
 }
