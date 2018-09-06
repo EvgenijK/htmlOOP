@@ -5,22 +5,22 @@ namespace htmlOOP;
 class Element implements \ArrayAccess
 {
 	/**
-	 * @var string name
+	 * @var string $name
 	 */
 	protected $name;
 
 	/**
-	 * @var Element parent
+	 * @var Element $parent
 	 */
 	protected $parent;
 
 	/**
-	 * @var string[] attributes
+	 * @var Attribute[] $attributes
 	 */
 	protected $attributes;
 
 	/**
-	 * @var ElementCollection children
+	 * @var ElementCollection $children
 	 */
 	protected $children;
 
@@ -28,8 +28,9 @@ class Element implements \ArrayAccess
 	 * Element constructor.
 	 *
 	 * @param string[] $attributes
+	 * @param Element[] $children
 	 */
-	public function __construct(array $attributes = [])
+	public function __construct(array $attributes = [], Element ...$children)
 	{
 
 		foreach ($attributes as $attribute => $value)
@@ -38,6 +39,8 @@ class Element implements \ArrayAccess
 		}
 
 		$this->children = new ElementCollection();
+
+		$this->addChildren(...$children);
 	}
 
 	/**
@@ -69,7 +72,7 @@ class Element implements \ArrayAccess
 
 	/**
 	 * @param string $attribute
-	 * @param $value
+	 * @param $value - Will be converted to a string by (string)
 	 */
 	public function setAttribute(string $attribute, $value)
 	{
@@ -82,6 +85,17 @@ class Element implements \ArrayAccess
 	protected function setParent(Element $parent)
 	{
 		$this->parent = $parent;
+	}
+
+	/**
+	 * @param Element ...$elements
+	 */
+	public function addChildren(Element ...$elements)
+	{
+		foreach ($elements as $element)
+		{
+			$this->append($element);
+		}
 	}
 
 	/**
