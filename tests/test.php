@@ -14,10 +14,19 @@ use htmlOOP\Element\Element;
 
 $test_element = new Element(
 	[
-		'class' => 'head'
+	    'name' => 'div',
+		'class' =>'head',
 	],
-	new Element(['class' => 'inner_!']),
-	new Element(['class' => 'inner_2'], new Element(['class' => 'inner_3']))
+	new Element(['name' => 'p', 'class' => 'inner_1_1']),
+	new Element(
+	    ['name' => 'div', 'class' => 'inner_1_2'],
+        new Element(['name' => 'blockquote', 'class' => 'inner_1_2_1']),
+        new Element(['name' => 'blockquote', 'class' => 'inner_1_2_2']),
+        new Element(['name' => 'blockquote', 'class' => 'inner_1_2_3'])
+    ),
+    'some lol text'
 );
 
-var_dump($test_element);
+$test_element_2 = new Element();
+
+var_dump($test_element->getData());
