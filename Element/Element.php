@@ -17,9 +17,16 @@ class Element implements \ArrayAccess
 	protected $parent;
 
 	/**
-	 * @var array $attributes
+	 * @var string[] $attributes
 	 */
 	protected $attributes;
+
+	/**
+	 * @var string[] $specialAttributes
+	 */
+	protected $specialAttributes = [
+		'name'
+    ];
 
 	/**
 	 * @var ElementCollection $children
@@ -78,7 +85,26 @@ class Element implements \ArrayAccess
 	 */
 	public function setAttribute(string $attribute, $value)
 	{
-		$this->attributes[$attribute] = (string) $value;
+	    if (!$this->setSpecialAttribute($attribute, $value))
+        {
+            $this->attributes[$attribute] = (string) $value;
+        }
+	}
+
+    /**
+     * @param string $attribute
+     * @param $value
+     * @return bool
+     */
+    private function setSpecialAttribute(string $attribute, $value)
+	{
+		if (in_array($attribute, $this->specialAttributes))
+		{
+			$this->$attribute = $value;
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 
 	/**
