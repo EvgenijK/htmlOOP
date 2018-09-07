@@ -22,11 +22,16 @@ class Element implements \ArrayAccess
 	protected $attributes;
 
 	/**
+	 * @var string $data
+	 */
+	protected $data;
+
+	/**
 	 * @var string[] $specialAttributes
 	 */
 	protected $specialAttributes = [
 		'name'
-    ];
+	];
 
 	/**
 	 * @var ElementCollection $children
@@ -39,7 +44,7 @@ class Element implements \ArrayAccess
 	 * @param string[] $attributes
 	 * @param Element[] $children
 	 */
-	public function __construct(array $attributes = [], Element ...$children)
+	public function __construct(array $attributes = [], ...$children)
 	{
 
 		foreach ($attributes as $attribute => $value)
@@ -59,6 +64,27 @@ class Element implements \ArrayAccess
 	{
 		$this->name = $value;
 	}
+
+	/**
+	 * @param string $value
+	 */
+	public function addData(string $value)
+	{
+		$this->data .= $value;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setData(string $value)
+	{
+		$this->data = $value;
+	}
+
+	public function getData()
+    {
+        return $this->data;
+    }
 
 	/**
 	 * @param Element $element
@@ -85,18 +111,18 @@ class Element implements \ArrayAccess
 	 */
 	public function setAttribute(string $attribute, $value)
 	{
-	    if (!$this->setSpecialAttribute($attribute, $value))
-        {
-            $this->attributes[$attribute] = (string) $value;
-        }
+		if (!$this->setSpecialAttribute($attribute, $value))
+		{
+			$this->attributes[$attribute] = (string) $value;
+		}
 	}
 
-    /**
-     * @param string $attribute
-     * @param $value
-     * @return bool
-     */
-    private function setSpecialAttribute(string $attribute, $value)
+	/**
+	 * @param string $attribute
+	 * @param $value
+	 * @return bool
+	 */
+	private function setSpecialAttribute(string $attribute, $value)
 	{
 		if (in_array($attribute, $this->specialAttributes))
 		{
@@ -116,13 +142,18 @@ class Element implements \ArrayAccess
 	}
 
 	/**
-	 * @param Element ...$elements
+	 * @param $elements
 	 */
-	public function addChildren(Element ...$elements)
+	public function addChildren(...$elements)
 	{
 		foreach ($elements as $element)
 		{
-			$this->append($element);
+			if (is_string($element))
+			{
+				$this->addData($element);
+			} else {
+				$this->append($element);
+			}
 		}
 	}
 
