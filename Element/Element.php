@@ -28,7 +28,7 @@ class Element implements \ArrayAccess
 	 * @param array     $data
 	 * @param Element[] $children
 	 */
-	public function __construct(array $data = [], ...$children)
+	public function __construct(array $data = [], Element ...$children)
 	{
 
 		foreach ($data as $index => $item)
@@ -36,7 +36,7 @@ class Element implements \ArrayAccess
 			$this->setData($index, $item);
 		}
 
-		$this->children = new ElementCollection();
+		$this->children = new ElementCollection($this);
 
 		$this->addChildren(...$children);
 	}
@@ -46,7 +46,7 @@ class Element implements \ArrayAccess
 	 */
 	public function addData(string $value)
 	{
-		$this->data .= $value;
+		$this->data[] = $value;
 	}
 
 	/**
@@ -104,24 +104,6 @@ class Element implements \ArrayAccess
 	}
 
 	/**
-	 * @param string $index
-	 * @param        $value
-	 *
-	 * @return bool
-	 */
-	private function setSpecialData(string $index, $value)
-	{
-		if (in_array($index, $this->specialData))
-		{
-			$this->$index = $value;
-
-			return TRUE;
-		}
-
-		return FALSE;
-	}
-
-	/**
 	 * @param Element $parent
 	 */
 	protected function setParent(Element $parent)
@@ -136,13 +118,7 @@ class Element implements \ArrayAccess
 	{
 		foreach ($elements as $element)
 		{
-			if (is_string($element))
-			{
-				$this->addData($element);
-			} else
-			{
-				$this->append($element);
-			}
+			$this->append($element);
 		}
 	}
 
@@ -153,6 +129,8 @@ class Element implements \ArrayAccess
 	{
 		unset($this->children[$offset]);
 	}
+
+	// Interface implementation
 
 	/**
 	 * Whether a offset exists
