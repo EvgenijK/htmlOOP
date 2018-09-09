@@ -25,8 +25,8 @@ class Element implements \ArrayAccess
 	/**
 	 * Element constructor.
 	 *
-	 * @param array     $data
-	 * @param Element[] $children
+	 * @param array   $data
+	 * @param Element ...$children
 	 */
 	public function __construct(array $data = [], Element ...$children)
 	{
