@@ -23,6 +23,11 @@ class ElementCollection implements \ArrayAccess
 	 */
 	protected $owner;
 
+	/**
+	 * ElementCollection constructor.
+	 *
+	 * @param Element $owner
+	 */
 	public function __construct(Element $owner)
 	{
 		$this->owner = $owner;
