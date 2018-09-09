@@ -19,6 +19,24 @@ class ElementCollection implements \ArrayAccess
 	protected $elements;
 
 	/**
+	 * @var Element $owner
+	 */
+	protected $owner;
+
+	public function __construct(Element $owner)
+	{
+		$this->owner = $owner;
+	}
+
+	/**
+	 * @return Element
+	 */
+	public function getOwner()
+	{
+		return $this->owner;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function get_elements()
