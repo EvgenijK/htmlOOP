@@ -6,10 +6,6 @@ use htmlOOP\ElementCollection\ElementCollection;
 
 class Element implements \ArrayAccess
 {
-	/**
-	 * @var string $name
-	 */
-	protected $name;
 
 	/**
 	 * @var Element $parent
@@ -17,21 +13,9 @@ class Element implements \ArrayAccess
 	protected $parent;
 
 	/**
-	 * @var string[] $attributes
-	 */
-	protected $attributes;
-
-	/**
-	 * @var string $data
+	 * @var array $data
 	 */
 	protected $data;
-
-	/**
-	 * @var string[] $specialAttributes
-	 */
-	protected $specialAttributes = [
-		'name'
-	];
 
 	/**
 	 * @var ElementCollection $children
@@ -41,28 +25,20 @@ class Element implements \ArrayAccess
 	/**
 	 * Element constructor.
 	 *
-	 * @param string[] $attributes
+	 * @param array     $data
 	 * @param Element[] $children
 	 */
-	public function __construct(array $attributes = [], ...$children)
+	public function __construct(array $data = [], ...$children)
 	{
 
-		foreach ($attributes as $attribute => $value)
+		foreach ($data as $index => $item)
 		{
-			$this->setAttribute($attribute, $value);
+			$this->setData($index, $item);
 		}
 
 		$this->children = new ElementCollection();
 
 		$this->addChildren(...$children);
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setName(string $value)
-	{
-		$this->name = $value;
 	}
 
 	/**
@@ -74,17 +50,39 @@ class Element implements \ArrayAccess
 	}
 
 	/**
+	 * @param        $index
 	 * @param string $value
 	 */
-	public function setData(string $value)
+	public function setData($index, string $value)
 	{
-		$this->data = $value;
+		$this->data[$index] = $value;
 	}
 
-	public function getData()
-    {
-        return $this->data;
-    }
+	/**
+	 * @return array
+	 */
+	public function getAllData()
+	{
+		return $this->data;
+	}
+
+	/**
+	 * @param array $new_data
+	 */
+	public function setAllData(array $new_data)
+	{
+		$this->data = $new_data;
+	}
+
+	/**
+	 * @param $index
+	 *
+	 * @return mixed
+	 */
+	public function getData($index)
+	{
+		return $this->data[$index];
+	}
 
 	/**
 	 * @param Element $element
@@ -97,7 +95,7 @@ class Element implements \ArrayAccess
 
 	/**
 	 * @param Element $element
-	 * @param int $offset
+	 * @param int     $offset
 	 */
 	public function setChild(int $offset, Element $element)
 	{
@@ -106,27 +104,17 @@ class Element implements \ArrayAccess
 	}
 
 	/**
-	 * @param string $attribute
-	 * @param $value - Will be converted to a string by (string)
-	 */
-	public function setAttribute(string $attribute, $value)
-	{
-		if (!$this->setSpecialAttribute($attribute, $value))
-		{
-			$this->attributes[$attribute] = (string) $value;
-		}
-	}
-
-	/**
-	 * @param string $attribute
-	 * @param $value
+	 * @param string $index
+	 * @param        $value
+	 *
 	 * @return bool
 	 */
-	private function setSpecialAttribute(string $attribute, $value)
+	private function setSpecialData(string $index, $value)
 	{
-		if (in_array($attribute, $this->specialAttributes))
+		if (in_array($index, $this->specialData))
 		{
-			$this->$attribute = $value;
+			$this->$index = $value;
+
 			return TRUE;
 		}
 
@@ -151,7 +139,8 @@ class Element implements \ArrayAccess
 			if (is_string($element))
 			{
 				$this->addData($element);
-			} else {
+			} else
+			{
 				$this->append($element);
 			}
 		}
@@ -167,10 +156,12 @@ class Element implements \ArrayAccess
 
 	/**
 	 * Whether a offset exists
-	 * @link https://php.net/manual/en/arrayaccess.offsetexists.php
+	 * @link  https://php.net/manual/en/arrayaccess.offsetexists.php
+	 *
 	 * @param mixed $offset <p>
-	 * An offset to check for.
-	 * </p>
+	 *                      An offset to check for.
+	 *                      </p>
+	 *
 	 * @return boolean true on success or false on failure.
 	 * </p>
 	 * <p>
@@ -184,45 +175,53 @@ class Element implements \ArrayAccess
 
 	/**
 	 * Offset to retrieve
-	 * @link https://php.net/manual/en/arrayaccess.offsetget.php
+	 * @link  https://php.net/manual/en/arrayaccess.offsetget.php
+	 *
 	 * @param mixed $offset <p>
-	 * The offset to retrieve.
-	 * </p>
+	 *                      The offset to retrieve.
+	 *                      </p>
+	 *
 	 * @return mixed Can return all value types.
 	 * @since 5.0.0
 	 */
 	public function offsetGet($offset)
 	{
-		return isset($this->children[$offset]) ? $this->children[$offset] : null;
+		return isset($this->children[$offset]) ? $this->children[$offset] : NULL;
 	}
 
 	/**
 	 * Offset to set
-	 * @link https://php.net/manual/en/arrayaccess.offsetset.php
+	 * @link  https://php.net/manual/en/arrayaccess.offsetset.php
+	 *
 	 * @param mixed $offset <p>
-	 * The offset to assign the value to.
-	 * </p>
-	 * @param mixed $value <p>
-	 * The value to set.
-	 * </p>
+	 *                      The offset to assign the value to.
+	 *                      </p>
+	 * @param mixed $value  <p>
+	 *                      The value to set.
+	 *                      </p>
+	 *
 	 * @return void
 	 * @since 5.0.0
 	 */
 	public function offsetSet($offset, $value)
 	{
-		if (is_null($offset)) {
+		if (is_null($offset))
+		{
 			$this->append($value);
-		} else {
+		} else
+		{
 			$this->setChild($offset, $value);
 		}
 	}
 
 	/**
 	 * Offset to unset
-	 * @link https://php.net/manual/en/arrayaccess.offsetunset.php
+	 * @link  https://php.net/manual/en/arrayaccess.offsetunset.php
+	 *
 	 * @param mixed $offset <p>
-	 * The offset to unset.
-	 * </p>
+	 *                      The offset to unset.
+	 *                      </p>
+	 *
 	 * @return void
 	 * @since 5.0.0
 	 */
