@@ -53,22 +53,6 @@ class ElementCollection implements \ArrayAccess
 	}
 
 	/**
-	 * @param $callback
-	 */
-	public function each($callback)
-	{
-		if (!is_callable($callback))
-		{
-			// todo throw exception: Must provide a valid callback
-		}
-
-		foreach ($this->get_elements() as $element)
-		{
-			call_user_func_array($callback, [$element]);
-		}
-	}
-
-	/**
 	 * Whether a offset exists
 	 * @link https://php.net/manual/en/arrayaccess.offsetexists.php
 	 * @param mixed $offset <p>
