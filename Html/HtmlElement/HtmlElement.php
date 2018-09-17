@@ -14,7 +14,6 @@ use htmlOOP\Html\IndexedCollection\HtmlElementCollection;
 class HtmlElement extends Element
 {
 
-	const SPECIAL_DATA_NAME = 'name';
 	const SPECIAL_DATA_ID = 'id';
 
 	/**
@@ -51,7 +50,6 @@ class HtmlElement extends Element
 	public function __construct(array $data = [], HtmlElement ...$children)
 	{
 		$this->specialData[] = HtmlElement::SPECIAL_DATA_ID;
-		$this->specialData[] = HtmlElement::SPECIAL_DATA_NAME;
 
 		$this->root = $this;
 
@@ -158,14 +156,6 @@ class HtmlElement extends Element
 	public function setAttribute(string $attribute, $value)
 	{
 		$this->data[$attribute] = (string) $value;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	public function setName(string $value)
-	{
-		$this->name = $value;
 	}
 
 	public function get_index()
