@@ -23,10 +23,9 @@ $test_element = new Element(
         new Element(['name' => 'blockquote', 'class' => 'inner_1_2_1']),
         new Element(['name' => 'blockquote', 'class' => 'inner_1_2_2']),
         new Element(['name' => 'blockquote', 'class' => 'inner_1_2_3'])
-    ),
-    'some lol text'
+    )
 );
 
 $test_element_2 = new Element();
 
-var_dump($test_element->getData());
+var_dump($test_element->getAllData());
