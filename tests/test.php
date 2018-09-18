@@ -9,23 +9,26 @@
 include "autoload.php";
 
 use htmlOOP\Element\Element;
+use htmlOOP\Html\HtmlElement\HtmlElement;
 
 // do some tests
 
-$test_element = new Element(
+//$test_element = new Element(
+$test_element = new HtmlElement(
 	[
-	    'name' => 'div',
+	    'id' => 'top_header',
 		'class' =>'head',
+        'tag' => 'div',
 	],
-	new Element(['name' => 'p', 'class' => 'inner_1_1']),
-	new Element(
+	new HtmlElement(['name' => 'p', 'class' => 'inner_1_1']),
+	new HtmlElement(
 	    ['name' => 'div', 'class' => 'inner_1_2'],
-        new Element(['name' => 'blockquote', 'class' => 'inner_1_2_1']),
-        new Element(['name' => 'blockquote', 'class' => 'inner_1_2_2']),
-        new Element(['name' => 'blockquote', 'class' => 'inner_1_2_3'])
+        new HtmlElement(['name' => 'blockquote', 'class' => 'inner_1_2_1']),
+        new HtmlElement(['name' => 'blockquote', 'class' => 'inner_1_2_2']),
+        new HtmlElement(['name' => 'blockquote', 'class' => 'inner_1_2_3'])
     )
 );
 
-$test_element_2 = new Element();
+$test_element_2 = new HtmlElement();
 
 var_dump($test_element->getAllData());
