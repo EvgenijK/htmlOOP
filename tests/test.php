@@ -16,9 +16,11 @@ use htmlOOP\Html\HtmlElement\HtmlElement;
 //$test_element = new Element(
 $test_element = new HtmlElement(
 	[
+	    'a' => 'test',
 	    'id' => 'top_header',
 		'class' =>'head',
         'tag' => 'div',
+        'disabled',
 	],
 	new HtmlElement(['name' => 'p', 'class' => 'inner_1_1']),
 	new HtmlElement(
@@ -32,3 +34,4 @@ $test_element = new HtmlElement(
 $test_element_2 = new HtmlElement();
 
 var_dump($test_element->getAllData());
+var_dump($test_element);
