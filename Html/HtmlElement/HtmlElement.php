@@ -161,19 +161,6 @@ class HtmlElement extends Element
 
 	/////////////////////////////////////////
 
-
-	public function set_index(string $value)
-	{
-		// todo добавить проверку
-		if (!$this->check_index($value))
-		{
-			// todo throw exception
-		}
-
-		$this->index = $value;
-		$this->indexed_elements->add_element($this);
-	}
-
 	/**
 	 * @param string $attribute
 	 * @param        $value - Will be converted to a string by (string)
@@ -181,20 +168,5 @@ class HtmlElement extends Element
 	public function setAttribute(string $attribute, $value)
 	{
 		$this->data[$attribute] = (string) $value;
-	}
-
-	public function get_index()
-	{
-		return $this->index;
-	}
-
-	/**
-	 * @param string $index
-	 *
-	 * @return bool
-	 */
-	protected function check_index(string $index)
-	{
-		return TRUE;
 	}
 }
