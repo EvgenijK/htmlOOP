@@ -6,11 +6,11 @@
  * Time: 13:55
  */
 
-namespace htmlOOP\Html\IndexedCollection;
-
-use htmlOOP\Html\HtmlElement\HtmlElement;
+namespace htmlOOP\Html\HtmlElementCollection;
 
 use htmlOOP\ElementCollection\ElementCollection;
+use htmlOOP\Html\HtmlElement\HtmlElement;
+
 
 class HtmlElementCollection extends ElementCollection
 {
