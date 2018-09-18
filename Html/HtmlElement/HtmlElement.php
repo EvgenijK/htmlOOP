@@ -103,6 +103,9 @@ class HtmlElement extends Element
 		$this->data[self::SPECIAL_DATA_ID] = $value;
 	}
 
+	/**
+	 * @param string $value
+	 */
 	protected function setTag(string $value)
 	{
 		$this->tag = $value;
