@@ -67,7 +67,7 @@ class HtmlElement extends Element
 	 * @param        $index
 	 * @param string $value
 	 */
-	public function setData($index, $value)
+	public function setData($index, string $value)
 	{
 		if (!$this->setSpecialData($index, $value))
 		{
