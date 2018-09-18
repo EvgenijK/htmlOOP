@@ -9,12 +9,13 @@
 namespace htmlOOP\Html\HtmlElement;
 
 use htmlOOP\Element\Element;
-use htmlOOP\Html\IndexedCollection\HtmlElementCollection;
+use htmlOOP\Html\HtmlElementCollection\HtmlElementCollection;
 
 class HtmlElement extends Element
 {
 
-	const SPECIAL_DATA_ID = 'id';
+	const SPECIAL_DATA_ID  = 'id';
+	const SPECIAL_DATA_TAG = 'tag';
 
 	/**
 	 * Root element of the structure
@@ -29,6 +30,11 @@ class HtmlElement extends Element
 	 * @var string $id
 	 */
 	protected $id;
+
+	/**
+	 * @var string $tag
+	 */
+	protected $tag;
 
 	/**
 	 * @var HtmlElementCollection $indexed_elements
@@ -50,10 +56,11 @@ class HtmlElement extends Element
 	public function __construct(array $data = [], HtmlElement ...$children)
 	{
 		$this->specialData[] = HtmlElement::SPECIAL_DATA_ID;
+		$this->specialData[] = HtmlElement::SPECIAL_DATA_TAG;
 
 		$this->root = $this;
 
-		parent::__construct($data, $children);
+		parent::__construct($data, ...$children);
 	}
 
 	/**
@@ -78,12 +85,27 @@ class HtmlElement extends Element
 	{
 		if (in_array($index, $this->specialData))
 		{
-			$this->$index = $value;
+			$setMethodName = 'set' . ucfirst($index);
+			$this->$setMethodName($value);
 
 			return TRUE;
 		}
 
 		return FALSE;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	protected function setId(string $value)
+	{
+		$this->id = $value;
+		$this->data[self::SPECIAL_DATA_ID] = $value;
+	}
+
+	protected function setTag(string $value)
+	{
+		$this->tag = $value;
 	}
 
 	/**
