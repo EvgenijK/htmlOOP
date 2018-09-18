@@ -67,12 +67,26 @@ class HtmlElement extends Element
 	 * @param        $index
 	 * @param string $value
 	 */
-	public function setData($index, string $value)
+	public function setData($index, $value)
 	{
 		if (!$this->setSpecialData($index, $value))
 		{
-			$this->data[$index] = $value;
+			if (is_int($index) && !empty((string) $value))
+			{
+				$this->setAttribute($value, '');
+			} else {
+				$this->setAttribute($index, $value);
+			}
 		}
+	}
+
+	/**
+	 * @param string $attribute
+	 * @param        $value - Will be converted to a string by (string)
+	 */
+	public function setAttribute(string $attribute, $value)
+	{
+		$this->data[$attribute] = (string) $value;
 	}
 
 	/**
@@ -83,7 +97,7 @@ class HtmlElement extends Element
 	 */
 	protected function setSpecialData($index, string $value)
 	{
-		if (in_array($index, $this->specialData))
+		if (in_array($index, $this->specialData, TRUE))
 		{
 			$setMethodName = 'set' . ucfirst($index);
 			$this->$setMethodName($value);
@@ -110,6 +124,8 @@ class HtmlElement extends Element
 	{
 		$this->tag = $value;
 	}
+
+	/////////////////////////////////////////
 
 	/**
 	 * @param HtmlElement      $root
@@ -158,15 +174,4 @@ class HtmlElement extends Element
 		parent::setParent($parent);
 	}
 
-
-	/////////////////////////////////////////
-
-	/**
-	 * @param string $attribute
-	 * @param        $value - Will be converted to a string by (string)
-	 */
-	public function setAttribute(string $attribute, $value)
-	{
-		$this->data[$attribute] = (string) $value;
-	}
 }
