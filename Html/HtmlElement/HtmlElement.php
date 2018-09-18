@@ -17,12 +17,21 @@ class HtmlElement extends Element
 	const SPECIAL_DATA_ID  = 'id';
 	const SPECIAL_DATA_TAG = 'tag';
 
+	const ELEMENT_TYPE_STANDARD = 'standard';
+	const ELEMENT_TYPE_EMPTY    = 'empty';
+	const ELEMENT_TYPE_TEXT     = 'text';
+
 	/**
 	 * Root element of the structure
 	 *
 	 * @var HtmlElement $root
 	 */
 	protected $root;
+
+	/**
+	 * @var string $element_type
+	 */
+	protected $element_type;
 
 	/**
 	 * Unique id in the structure
@@ -123,6 +132,21 @@ class HtmlElement extends Element
 	protected function setTag(string $value)
 	{
 		$this->tag = $value;
+	}
+
+	protected function setElementTypeStandard()
+	{
+		$this->element_type = self::ELEMENT_TYPE_STANDARD;
+	}
+
+	protected function setElementTypeEmpty()
+	{
+		$this->element_type = self::ELEMENT_TYPE_EMPTY;
+	}
+
+	protected function setElementTypeText()
+	{
+		$this->element_type = self::ELEMENT_TYPE_TEXT;
 	}
 
 	/////////////////////////////////////////
