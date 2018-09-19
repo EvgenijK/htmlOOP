@@ -3,9 +3,17 @@
 namespace htmlOOP\Element;
 
 use htmlOOP\ElementCollection\ElementCollection;
+use htmlOOP\HeadElement\HeadElement;
 
 class Element implements \ArrayAccess
 {
+
+    /**
+     * Head element of the structure
+     *
+     * @var HeadElement $root
+     */
+    protected $head;
 
 	/**
 	 * @var Element $parent
@@ -36,10 +44,12 @@ class Element implements \ArrayAccess
 			$this->setData($index, $item);
 		}
 
-		$this->children = new ElementCollection($this);
+        $this->head = new HeadElement($this);
+
+        $this->children = new ElementCollection($this);
 
 		$this->addChildren(...$children);
-	}
+    }
 
 	/**
 	 * @param string $value
@@ -91,6 +101,7 @@ class Element implements \ArrayAccess
 	{
 		$this->children[] = $element;
 		$element->setParent($this);
+		$element->setHead($this->getHead());
 	}
 
 	/**
@@ -121,6 +132,28 @@ class Element implements \ArrayAccess
 			$this->append($element);
 		}
 	}
+
+    /**
+     * @param HeadElement $new_head
+     */
+    protected function setHead(HeadElement $new_head)
+    {
+        if ($this->head->getHead() === $this)
+        {
+            $this->head->setHead($new_head->getHead());
+
+        } else {
+            // todo: throw exception - trying to append not head element to another tree
+        }
+    }
+
+    /**
+     * @return HeadElement
+     */
+    public function getHead()
+    {
+        return $this->head;
+    }
 
 	/**
 	 * @param int $offset

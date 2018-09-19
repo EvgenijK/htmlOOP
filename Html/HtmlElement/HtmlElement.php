@@ -22,13 +22,6 @@ class HtmlElement extends Element
 	const ELEMENT_TYPE_TEXT     = 'text';
 
 	/**
-	 * Root element of the structure
-	 *
-	 * @var HtmlElement $root
-	 */
-	protected $root;
-
-	/**
 	 * @var string $element_type
 	 */
 	protected $element_type;
@@ -66,8 +59,6 @@ class HtmlElement extends Element
 	{
 		$this->specialData[] = HtmlElement::SPECIAL_DATA_ID;
 		$this->specialData[] = HtmlElement::SPECIAL_DATA_TAG;
-
-		$this->root = $this;
 
 		parent::__construct($data, ...$children);
 	}
@@ -147,55 +138,6 @@ class HtmlElement extends Element
 	protected function setElementTypeText()
 	{
 		$this->element_type = self::ELEMENT_TYPE_TEXT;
-	}
-
-	/////////////////////////////////////////
-
-	/**
-	 * @param HtmlElement      $root
-	 * @param HtmlElement|NULL $oldRoot
-	 */
-	protected function setRoot(HtmlElement $root, $oldRoot = NULL)
-	{
-		if ($oldRoot === NULL && $this->root === $this)
-		{
-			foreach ($this->children as $child)
-			{
-				$child->setRoot($root, $this);
-			}
-
-			$this->root = $root;
-
-		} elseif ($oldRoot instanceof HtmlElement)
-		{
-			if ($this->root === $oldRoot)
-			{
-				foreach ($this->children as $child)
-				{
-					$child->setRoot($root, $oldRoot);
-				}
-
-				$this->root = $root;
-			}
-		}
-	}
-
-	/**
-	 * @return HtmlElement
-	 */
-	public function getRoot()
-	{
-		return $this->root;
-	}
-
-	/**
-	 * @param HtmlElement $parent
-	 */
-	protected function setParent(HtmlElement $parent)
-	{
-		$this->setRoot($parent->getRoot());
-
-		parent::setParent($parent);
 	}
 
 }
