@@ -8,30 +8,31 @@
 
 include "autoload.php";
 
-use htmlOOP\Element\Element;
 use htmlOOP\Html\HtmlElement\HtmlElement;
 
 // do some tests
 
-//$test_element = new Element(
 $test_element = new HtmlElement(
 	[
-	    'a' => 'test',
-	    'id' => 'top_header',
+		'id' => 'top_header',
 		'class' =>'head',
-        'tag' => 'div',
-        'disabled',
+		'tag' => 'div',
+		'disabled',
 	],
-	new HtmlElement(['name' => 'p', 'class' => 'inner_1_1']),
-	new HtmlElement(
-	    ['name' => 'div', 'class' => 'inner_1_2'],
-        new HtmlElement(['name' => 'blockquote', 'class' => 'inner_1_2_1']),
-        new HtmlElement(['name' => 'blockquote', 'class' => 'inner_1_2_2']),
-        new HtmlElement(['name' => 'blockquote', 'class' => 'inner_1_2_3'])
-    )
+	new HtmlElement(['tag' => 'p', 'id' => 'inner_1_1']),
+	new HtmlElement(['tag' => 'div', 'id' => 'inner_1_2'],
+		new HtmlElement(['class' => 'blockquote', 'id' => 'inner_1_2_1']),
+		new HtmlElement(['class' => 'blockquote', 'id' => 'inner_1_2_2']),
+		new HtmlElement(['class' => 'blockquote', 'id' => 'inner_1_2_3'])
+	)
 );
 
-$test_element_2 = new HtmlElement();
+$test_element_2 = new HtmlElement(['id' => 'old_root'],
+	new HtmlElement(['id' => 'old_el_1']),
+	new HtmlElement(['id' => 'old_el_2']),
+	new HtmlElement(['id' => 'old_el_3'])
+);
 
-var_dump($test_element->getAllData());
-var_dump($test_element);
+$test_element[1][2]->addChildren($test_element_2);
+var_dump($test_element_2[0]->getRoot()->getId());
+
