@@ -34,7 +34,6 @@ class Element implements \ArrayAccess
 	 */
 	public function __construct(array $data = [], Element ...$children)
 	{
-		echo 'construct: ' . $data['id'] . PHP_EOL . PHP_EOL;
 		$this->root = $this;
 
 		foreach ($data as $index => $item)
@@ -97,13 +96,19 @@ class Element implements \ArrayAccess
 	 */
 	public function append(Element $element)
 	{
-		echo 'append ' . $element->getData('id') . ' to ' . $this->getData('id') . PHP_EOL . PHP_EOL;
-		$this->children[] = $element;
-		$element->setParent($this);
-		$element->setRoot($this->getRoot());
+		if ($element->getRoot() === $element)
+		{
+			$this->children[] = $element;
+			$element->setParent($this);
+			$element->updateTree($this->getRoot());
+		} else {
+			throw new \Exception('Appending element that isn\'t the root of it\'s tree');
+		}
 	}
 
 	/**
+	 * TODO Rework this method to work with id and root update
+	 *
 	 * @param Element $element
 	 * @param int     $offset
 	 */
@@ -127,6 +132,22 @@ class Element implements \ArrayAccess
 	public function getParent()
 	{
 		return $this->parent;
+	}
+
+	/**
+	 * @param Element $root
+	 *
+	 * @throws \Exception
+	 */
+	protected function updateTree(Element $root)
+	{
+
+		foreach ($this->children as $child)
+		{
+			$child->updateTree($root);
+		}
+
+		$this->root = $root;
 	}
 
 	/**
