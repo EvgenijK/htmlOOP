@@ -3,17 +3,11 @@
 namespace htmlOOP\Element;
 
 use htmlOOP\ElementCollection\ElementCollection;
-use htmlOOP\HeadElement\HeadElement;
+use htmlOOP\Element\Traits\TraitRootElement;
 
 class Element implements \ArrayAccess
 {
-
-    /**
-     * Head element of the structure
-     *
-     * @var HeadElement $root
-     */
-    protected $head;
+	use TraitRootElement;
 
 	/**
 	 * @var Element $parent
@@ -35,21 +29,23 @@ class Element implements \ArrayAccess
 	 *
 	 * @param array   $data
 	 * @param Element ...$children
+	 *
+	 * @throws \Exception
 	 */
 	public function __construct(array $data = [], Element ...$children)
 	{
+		echo 'construct: ' . $data['id'] . PHP_EOL . PHP_EOL;
+		$this->root = $this;
 
 		foreach ($data as $index => $item)
 		{
 			$this->setData($index, $item);
 		}
 
-        $this->head = new HeadElement($this);
-
-        $this->children = new ElementCollection($this);
+		$this->children = new ElementCollection($this);
 
 		$this->addChildren(...$children);
-    }
+	}
 
 	/**
 	 * @param string $value
@@ -96,12 +92,15 @@ class Element implements \ArrayAccess
 
 	/**
 	 * @param Element $element
+	 *
+	 * @throws \Exception
 	 */
 	public function append(Element $element)
 	{
+		echo 'append ' . $element->getData('id') . ' to ' . $this->getData('id') . PHP_EOL . PHP_EOL;
 		$this->children[] = $element;
 		$element->setParent($this);
-		$element->setHead($this->getHead());
+		$element->setRoot($this->getRoot());
 	}
 
 	/**
@@ -123,7 +122,17 @@ class Element implements \ArrayAccess
 	}
 
 	/**
+	 * @return Element
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
 	 * @param $elements
+	 *
+	 * @throws \Exception
 	 */
 	public function addChildren(...$elements)
 	{
@@ -132,28 +141,6 @@ class Element implements \ArrayAccess
 			$this->append($element);
 		}
 	}
-
-    /**
-     * @param HeadElement $new_head
-     */
-    protected function setHead(HeadElement $new_head)
-    {
-        if ($this->head->getHead() === $this)
-        {
-            $this->head->setHead($new_head->getHead());
-
-        } else {
-            // todo: throw exception - trying to append not head element to another tree
-        }
-    }
-
-    /**
-     * @return HeadElement
-     */
-    public function getHead()
-    {
-        return $this->head;
-    }
 
 	/**
 	 * @param int $offset
@@ -192,7 +179,7 @@ class Element implements \ArrayAccess
 	 *                      The offset to retrieve.
 	 *                      </p>
 	 *
-	 * @return mixed Can return all value types.
+	 * @return Element Can return all value types.
 	 * @since 5.0.0
 	 */
 	public function offsetGet($offset)
@@ -213,6 +200,7 @@ class Element implements \ArrayAccess
 	 *
 	 * @return void
 	 * @since 5.0.0
+	 * @throws \Exception
 	 */
 	public function offsetSet($offset, $value)
 	{
