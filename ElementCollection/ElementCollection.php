@@ -9,8 +9,9 @@
 namespace htmlOOP\ElementCollection;
 
 use htmlOOP\Element\Element;
+use \Traversable;
 
-class ElementCollection implements \ArrayAccess
+class ElementCollection implements \ArrayAccess, \IteratorAggregate
 {
 
 	/**
@@ -31,6 +32,7 @@ class ElementCollection implements \ArrayAccess
 	public function __construct(Element $owner)
 	{
 		$this->owner = $owner;
+		$this->elements = [];
 	}
 
 	/**
@@ -80,7 +82,7 @@ class ElementCollection implements \ArrayAccess
 	 * @param mixed $offset <p>
 	 * The offset to retrieve.
 	 * </p>
-	 * @return mixed Can return all value types.
+	 * @return Element Can return all value types.
 	 * @since 5.0.0
 	 */
 	public function offsetGet($offset)
@@ -90,15 +92,18 @@ class ElementCollection implements \ArrayAccess
 
 	/**
 	 * Offset to set
-	 * @link https://php.net/manual/en/arrayaccess.offsetset.php
-	 * @param mixed $offset <p>
-	 * The offset to assign the value to.
-	 * </p>
-	 * @param mixed $value <p>
-	 * The value to set.
-	 * </p>
+	 * @link  https://php.net/manual/en/arrayaccess.offsetset.php
+	 *
+	 * @param Element $offset <p>
+	 *                        The offset to assign the value to.
+	 *                        </p>
+	 * @param mixed   $value  <p>
+	 *                        The value to set.
+	 *                        </p>
+	 *
 	 * @return void
 	 * @since 5.0.0
+	 * @throws \Exception
 	 */
 	public function offsetSet($offset, $value)
 	{
@@ -107,8 +112,8 @@ class ElementCollection implements \ArrayAccess
 		} else if(is_int($offset)) {
 			$this->elements[$offset] = $value;
 		} else {
-			// only numeric offset allowed in ElementsCollection
-			// todo throw exception
+			// TODO: create specific class exception for this class
+			throw new \Exception('only numeric offset allowed in ElementsCollection');
 		}
 	}
 
@@ -124,5 +129,17 @@ class ElementCollection implements \ArrayAccess
 	public function offsetUnset($offset)
 	{
 		unset($this->elements[$offset]);
+	}
+
+	/**
+	 * Retrieve an external iterator
+	 * @link  https://php.net/manual/en/iteratoraggregate.getiterator.php
+	 * @return Traversable An instance of an object implementing <b>Iterator</b> or
+	 * <b>Traversable</b>
+	 * @since 5.0.0
+	 */
+	public function getIterator()
+	{
+		return new \ArrayIterator($this->elements);
 	}
 }
