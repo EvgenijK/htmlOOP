@@ -14,7 +14,6 @@ use htmlOOP\Html\HtmlElementCollection\HtmlElementCollection;
 class HtmlElement extends Element
 {
 
-	const SPECIAL_DATA_ID  = 'id';
 	const SPECIAL_DATA_TAG = 'tag';
 
 	const ELEMENT_TYPE_STANDARD = 'standard';
@@ -44,16 +43,12 @@ class HtmlElement extends Element
 	protected $indexed_elements;
 
 	/**
-	 * @var string[] $specialData
-	 */
-	protected $specialData = [
-	];
-
-	/**
 	 * HtmlElement constructor.
 	 *
 	 * @param array       $data
 	 * @param HtmlElement ...$children
+	 *
+	 * @throws \Exception
 	 */
 	public function __construct(array $data = [], HtmlElement ...$children)
 	{

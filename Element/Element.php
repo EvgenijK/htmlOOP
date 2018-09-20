@@ -3,11 +3,16 @@
 namespace htmlOOP\Element;
 
 use htmlOOP\ElementCollection\ElementCollection;
+
 use htmlOOP\Element\Traits\TraitRootElement;
+use htmlOOP\Element\Traits\TraitElementIndex;
 
 class Element implements \ArrayAccess
 {
 	use TraitRootElement;
+	use TraitElementIndex;
+
+    const SPECIAL_DATA_ID  = 'id';
 
 	/**
 	 * @var Element $parent
@@ -18,6 +23,11 @@ class Element implements \ArrayAccess
 	 * @var array $data
 	 */
 	protected $data;
+
+    /**
+     * @var string[] $specialData
+     */
+    protected $specialData = [];
 
 	/**
 	 * @var ElementCollection $children
@@ -34,7 +44,10 @@ class Element implements \ArrayAccess
 	 */
 	public function __construct(array $data = [], Element ...$children)
 	{
+        $this->specialData[] = Element::SPECIAL_DATA_ID;
+
 		$this->root = $this;
+		$this->index = new ElementCollection($this);
 
 		foreach ($data as $index => $item)
 		{
@@ -45,6 +58,8 @@ class Element implements \ArrayAccess
 
 		$this->addChildren(...$children);
 	}
+
+	// Data
 
 	/**
 	 * @param string $value
@@ -60,16 +75,37 @@ class Element implements \ArrayAccess
 	 */
 	public function setData($index, string $value)
 	{
+        if (!$this->setSpecialData($index, $value))
+        {
+            if (is_int($index) && !empty((string) $value))
+            {
+//                $this->setAttribute($value, '');
+            } else {
+//                $this->setAttribute($index, $value);
+            }
+        }
+
 		$this->data[$index] = $value;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getAllData()
-	{
-		return $this->data;
-	}
+    /**
+     * @param        $index
+     * @param string $value
+     *
+     * @return bool
+     */
+    protected function setSpecialData($index, string $value)
+    {
+        if (in_array($index, $this->specialData, TRUE))
+        {
+            $setMethodName = 'set' . ucfirst($index);
+            $this->$setMethodName($value);
+
+            return TRUE;
+        }
+
+        return FALSE;
+    }
 
 	/**
 	 * @param array $new_data
@@ -90,33 +126,14 @@ class Element implements \ArrayAccess
 	}
 
 	/**
-	 * @param Element $element
-	 *
-	 * @throws \Exception
+	 * @return array
 	 */
-	public function append(Element $element)
+	public function getAllData()
 	{
-		if ($element->getRoot() === $element)
-		{
-			$this->children[] = $element;
-			$element->setParent($this);
-			$element->updateTree($this->getRoot());
-		} else {
-			throw new \Exception('Appending element that isn\'t the root of it\'s tree');
-		}
+		return $this->data;
 	}
 
-	/**
-	 * TODO Rework this method to work with id and root update
-	 *
-	 * @param Element $element
-	 * @param int     $offset
-	 */
-	public function setChild(int $offset, Element $element)
-	{
-		$this->children[$offset] = $element;
-		$element->setParent($this);
-	}
+	// Parent
 
 	/**
 	 * @param Element $parent
@@ -134,20 +151,61 @@ class Element implements \ArrayAccess
 		return $this->parent;
 	}
 
+	// Index
+
+	protected function compareIndex(ElementCollection $additional_index)
+	{
+		if (!array_intersect_key($this->getIndex()->getElements(), $additional_index->getElements()))
+		{
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
+	// Children
+
 	/**
-	 * @param Element $root
+	 * @param Element $element
 	 *
 	 * @throws \Exception
 	 */
-	protected function updateTree(Element $root)
+	public function append(Element $element)
+	{
+		if ($element->getRoot() !== $element)
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Appending element that isn\'t the root of it\'s tree');
+		}
+
+		if ($this->compareIndex($element->getIndex()))
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Appending element tree that has elements with same id as elements from parent tree');
+		}
+
+		$this->children[] = $element;
+		$element->setParent($this);
+		$element->updateTree($this->getRoot(), $this->getIndex());
+	}
+
+	/**
+	 * @param Element           $root
+	 * @param ElementCollection $newIndex
+	 *
+	 * @throws \Exception
+	 */
+	protected function updateTree(Element $root, ElementCollection $newIndex)
 	{
 
 		foreach ($this->children as $child)
 		{
-			$child->updateTree($root);
+			$child->updateTree($root, $newIndex);
 		}
 
 		$this->root = $root;
+
+		$this->addToIndex($this, $newIndex);
 	}
 
 	/**
@@ -161,6 +219,18 @@ class Element implements \ArrayAccess
 		{
 			$this->append($element);
 		}
+	}
+
+	/**
+	 * TODO Rework this method to work with id and root update
+	 *
+	 * @param Element $element
+	 * @param int     $offset
+	 */
+	public function setChild(int $offset, Element $element)
+	{
+		$this->children[$offset] = $element;
+		$element->setParent($this);
 	}
 
 	/**

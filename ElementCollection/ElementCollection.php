@@ -46,7 +46,7 @@ class ElementCollection implements \ArrayAccess, \IteratorAggregate
 	/**
 	 * @return array
 	 */
-	public function get_elements()
+	public function getElements()
 	{
 		return $this->elements;
 	}
@@ -56,7 +56,7 @@ class ElementCollection implements \ArrayAccess, \IteratorAggregate
 	 */
 	public function merge_collection(ElementCollection $collection)
 	{
-		array_merge($this->elements, $collection->get_elements());
+		array_merge($this->elements, $collection->getElements());
 	}
 
 	/**
@@ -94,7 +94,7 @@ class ElementCollection implements \ArrayAccess, \IteratorAggregate
 	 * Offset to set
 	 * @link  https://php.net/manual/en/arrayaccess.offsetset.php
 	 *
-	 * @param Element $offset <p>
+	 * @param string|int $offset <p>
 	 *                        The offset to assign the value to.
 	 *                        </p>
 	 * @param mixed   $value  <p>
@@ -109,11 +109,8 @@ class ElementCollection implements \ArrayAccess, \IteratorAggregate
 	{
 		if (is_null($offset)) {
 			$this->elements[] = $value;
-		} else if(is_int($offset)) {
-			$this->elements[$offset] = $value;
 		} else {
-			// TODO: create specific class exception for this class
-			throw new \Exception('only numeric offset allowed in ElementsCollection');
+			$this->elements[$offset] = $value;
 		}
 	}
 
