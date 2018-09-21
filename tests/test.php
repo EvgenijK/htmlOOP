@@ -31,13 +31,14 @@ try
 
 	$test_element_2 = new HtmlElement(
 		['id' => 'old_root'],
-		new HtmlElement(['id' => 'old_el_1']),
+		new HtmlElement(['name' => 'old_el_1']),
 		new HtmlElement(['id' => 'old_el_2']),
 		new HtmlElement(['id' => 'old_el_3'])
 	);
 
 	$test_element[1][2]->addChildren($test_element_2);
-	var_dump($test_element_2[0]->getRoot()->getId());
+	var_dump($test_element_2[1]->getRoot()->getIndexKeys());
+	var_dump($test_element_2[1]->getIndex()['inner_1_2_2']->getId());
 
 } catch (Exception $e)
 {

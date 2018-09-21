@@ -12,7 +12,7 @@ class Element implements \ArrayAccess
 	use TraitRootElement;
 	use TraitElementIndex;
 
-    const SPECIAL_DATA_ID  = 'id';
+	const SPECIAL_DATA_ID  = 'id';
 
 	/**
 	 * @var Element $parent
@@ -24,10 +24,10 @@ class Element implements \ArrayAccess
 	 */
 	protected $data;
 
-    /**
-     * @var string[] $specialData
-     */
-    protected $specialData = [];
+	/**
+	 * @var string[] $specialData
+	 */
+	protected $specialData = [];
 
 	/**
 	 * @var ElementCollection $children
@@ -44,7 +44,7 @@ class Element implements \ArrayAccess
 	 */
 	public function __construct(array $data = [], Element ...$children)
 	{
-        $this->specialData[] = Element::SPECIAL_DATA_ID;
+		$this->specialData[] = Element::SPECIAL_DATA_ID;
 
 		$this->root = $this;
 		$this->index = new ElementCollection($this);
@@ -70,42 +70,42 @@ class Element implements \ArrayAccess
 	}
 
 	/**
-	 * @param        $index
-	 * @param string $value
+	 * @param $index
+	 * @param $value
 	 */
-	public function setData($index, string $value)
+	public function setData($index, $value)
 	{
-        if (!$this->setSpecialData($index, $value))
-        {
-            if (is_int($index) && !empty((string) $value))
-            {
-//                $this->setAttribute($value, '');
-            } else {
-//                $this->setAttribute($index, $value);
-            }
-        }
+		if (!$this->setSpecialData($index, $value))
+		{
+			if (is_int($index) && !empty((string) $value))
+			{
+				$this->data[$index] = $value;
+			} else {
+				$this->data[$value] = '';
+			}
+		}
 
 		$this->data[$index] = $value;
 	}
 
-    /**
-     * @param        $index
-     * @param string $value
-     *
-     * @return bool
-     */
-    protected function setSpecialData($index, string $value)
-    {
-        if (in_array($index, $this->specialData, TRUE))
-        {
-            $setMethodName = 'set' . ucfirst($index);
-            $this->$setMethodName($value);
+	/**
+	 * @param        $index
+	 * @param string $value
+	 *
+	 * @return bool
+	 */
+	protected function setSpecialData($index, string $value)
+	{
+		if (in_array($index, $this->specialData, TRUE))
+		{
+			$setMethodName = 'set' . ucfirst($index);
+			$this->$setMethodName($value);
 
-            return TRUE;
-        }
+			return TRUE;
+		}
 
-        return FALSE;
-    }
+		return FALSE;
+	}
 
 	/**
 	 * @param array $new_data
@@ -163,6 +163,24 @@ class Element implements \ArrayAccess
 		return TRUE;
 	}
 
+	/**
+	 * @param string  $id
+	 *
+	 * @throws \Exception
+	 */
+	public function setId(string $id)
+	{
+		if ($this->checkId($id))
+		{
+			throw new \Exception('There is already an element with the same id in index');
+		}
+
+		$this->index[$id] = $this;
+
+		$this->data[self::SPECIAL_DATA_ID] = $id;
+		$this->id = $id;
+	}
+
 	// Children
 
 	/**
@@ -205,7 +223,8 @@ class Element implements \ArrayAccess
 
 		$this->root = $root;
 
-		$this->addToIndex($this, $newIndex);
+		$root->addIndex($this);
+		$this->setIndex($root->getIndex());
 	}
 
 	/**

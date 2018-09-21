@@ -20,10 +20,15 @@ trait TraitElementIndex
 	 */
 	protected $index;
 
-    /**
-     * @var string $id
-     */
+	/**
+	 * @var string $id
+	 */
 	protected $id;
+
+	protected function setIndex(ElementCollection $newIndex)
+	{
+		$this->index = $newIndex;
+	}
 
 	/**
 	 * @return ElementCollection
@@ -33,29 +38,23 @@ trait TraitElementIndex
 		return $this->index;
 	}
 
-    /**
-     * @param string  $id
-     * @param Element $element
-     *
-     * @throws \Exception
-     */
-    public function setId(string $id, Element $element)
-    {
-        if (!$this->checkIdInIndex($id, $element->getIndex()))
-        {
-            throw new \Exception('There is already an element with the same id in index');
-        }
+	/**
+	 * @return string
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
 
-        $this->addToIndex($element, $element->getIndex());
-    }
+	public function getIndexKeys()
+	{
+		return array_keys($this->getIndex()->getElements());
+	}
 
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+	public function getById(string $id)
+	{
+		return $this->index[$id];
+	}
 
 	/**
 	 * @param string            $id
@@ -63,9 +62,14 @@ trait TraitElementIndex
 	 *
 	 * @return bool
 	 */
-	public function checkIdInIndex(string $id, ElementCollection $index)
+	protected function checkIdInIndex(string $id, ElementCollection $index)
 	{
 		return in_array($id, array_keys($index->getElements()));
+	}
+
+	public function checkId(string $id)
+	{
+		return $this->checkIdInIndex($id, $this->getIndex());
 	}
 
 	/**
@@ -74,17 +78,27 @@ trait TraitElementIndex
 	 *
 	 * @throws \Exception
 	 */
-	protected function addToIndex(Element $element, ElementCollection $index)
+	protected function addElementToIndex(Element $element, ElementCollection $index)
 	{
 		if ($element->getId())
 		{
 			if ($this->checkIdInIndex($element->getId(), $index))
 			{
-                throw new \Exception('There is already an element with the same id in index');
-            }
+				throw new \Exception('There is already an element with the same id in index');
+			}
 
 			$this->index[$element->getId()] = $element;
 		}
+	}
+
+	/**
+	 * @param Element $element
+	 *
+	 * @throws \Exception
+	 */
+	protected function addIndex(Element $element)
+	{
+		$this->addElementToIndex($element, $this->getIndex());
 	}
 
 }

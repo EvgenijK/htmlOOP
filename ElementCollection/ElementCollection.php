@@ -82,7 +82,7 @@ class ElementCollection implements \ArrayAccess, \IteratorAggregate
 	 * @param mixed $offset <p>
 	 * The offset to retrieve.
 	 * </p>
-	 * @return Element Can return all value types.
+	 * @return Element|null Can return all value types.
 	 * @since 5.0.0
 	 */
 	public function offsetGet($offset)

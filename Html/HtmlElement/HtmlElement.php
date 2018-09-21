@@ -85,34 +85,6 @@ class HtmlElement extends Element
 	}
 
 	/**
-	 * @param        $index
-	 * @param string $value
-	 *
-	 * @return bool
-	 */
-	protected function setSpecialData($index, string $value)
-	{
-		if (in_array($index, $this->specialData, TRUE))
-		{
-			$setMethodName = 'set' . ucfirst($index);
-			$this->$setMethodName($value);
-
-			return TRUE;
-		}
-
-		return FALSE;
-	}
-
-	/**
-	 * @param string $value
-	 */
-	protected function setId(string $value)
-	{
-		$this->id = $value;
-		$this->data[self::SPECIAL_DATA_ID] = $value;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getId()
