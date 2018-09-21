@@ -9,105 +9,102 @@
 namespace htmlOOP\Html\HtmlElement;
 
 use htmlOOP\Element\Element;
+use htmlOOP\Html\HtmlElementCollection\HtmlElementCollection;
 
 class HtmlElement extends Element
 {
 
-    /**
-     * @var string index
-     */
-    private $index;
+	const SPECIAL_DATA_TAG = 'tag';
 
-    /**
-     * @var ElementCollection indexed_elements
-     */
-    private $indexed_elements;
+	const ELEMENT_TYPE_STANDARD = 'standard';
+	const ELEMENT_TYPE_EMPTY    = 'empty';
+	const ELEMENT_TYPE_TEXT     = 'text';
 
-    /**
-     * Element constructor.
-     *
-     * @param Element|string $values
-     */
-    public function __construct(...$values)
-    {
-        $tmp_children = new ElementCollection();
-        $tmp_attributes = [];
+	/**
+	 * @var string $element_type
+	 */
+	protected $element_type;
 
-        foreach ($values as $index => $value)
-        {
-            if ($value instanceof Element)
-            {
+	/**
+	 * Unique id in the structure
+	 *
+	 * @var string $id
+	 */
+	protected $id;
 
-                if (is_string($index) && $this->check_index($index))
-                {
-                    $value->set_index($index);
-                }
+	/**
+	 * @var string $tag
+	 */
+	protected $tag;
 
-                $tmp_children[] = $value;
-            } elseif ($value instanceof ElementCollection)
-            {
-                $tmp_children->merge_collection($value);
-            } elseif (is_string($value) || is_numeric($value))
-            {
-                if (is_string($index))
-                {
-                    // добавляется аттрибут
+	/**
+	 * @var HtmlElementCollection $indexed_elements
+	 */
+	protected $indexed_elements;
 
-                    if (key_exists($index, $this->attributes))
-                    {
-                        // todo throw exception
-                    }
+	/**
+	 * HtmlElement constructor.
+	 *
+	 * @param array       $data
+	 * @param HtmlElement ...$children
+	 *
+	 * @throws \Exception
+	 */
+	public function __construct(array $data = [], HtmlElement ...$children)
+	{
+		$this->specialData[] = HtmlElement::SPECIAL_DATA_ID;
+		$this->specialData[] = HtmlElement::SPECIAL_DATA_TAG;
 
-                    $tmp_attributes[$index] = $value;
+		parent::__construct($data, ...$children);
+	}
 
-                } elseif (is_numeric($index) && (is_string($value) || is_numeric($value)))
-                {
-                    // добавляется просто текст в значение элемента
-                    $tmp_children[] = new Element($value);
-                } else
-                {
-                    // todo throw exception
-                }
-            }
-        }
+	/**
+	 * @param        $index
+	 * @param string $value
+	 */
+	public function setData($index, string $value)
+	{
+		if (!$this->setSpecialData($index, $value))
+		{
+			if (is_int($index) && !empty((string) $value))
+			{
+				$this->setAttribute($value, '');
+			} else {
+				$this->setAttribute($index, $value);
+			}
+		}
+	}
 
-        foreach ($tmp_children->get_elements() as $element)
-        {
-            $this->add_child($element);
-        }
+	/**
+	 * @param string $attribute
+	 * @param        $value - Will be converted to a string by (string)
+	 */
+	public function setAttribute(string $attribute, $value)
+	{
+		$this->data[$attribute] = (string) $value;
+	}
 
-        foreach ($tmp_attributes as $attribute => $value)
-        {
-            $this->set_attribute($attribute, $value);
-        }
+	/**
+	 * @param string $value
+	 */
+	protected function setTag(string $value)
+	{
+		$this->tag = $value;
+	}
 
+	protected function setElementTypeStandard()
+	{
+		$this->element_type = self::ELEMENT_TYPE_STANDARD;
+	}
 
-    }
+	protected function setElementTypeEmpty()
+	{
+		$this->element_type = self::ELEMENT_TYPE_EMPTY;
+	}
 
-    public function set_index(string $value)
-    {
-        // todo добавить проверку
-        if (!$this->check_index($value))
-        {
-            // todo throw exception
-        }
+	protected function setElementTypeText()
+	{
+		$this->element_type = self::ELEMENT_TYPE_TEXT;
+	}
 
-        $this->index = $value;
-        $this->indexed_elements->add_element($this);
-    }
-
-    public function get_index()
-    {
-        return $this->index;
-    }
-
-    /**
-     * @param string $index
-     *
-     * @return bool
-     */
-    private function check_index(string $index)
-    {
-        return TRUE;
-    }
 }
