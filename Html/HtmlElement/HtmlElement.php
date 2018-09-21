@@ -85,14 +85,6 @@ class HtmlElement extends Element
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getId()
-	{
-		return $this->id;
-	}
-
-	/**
 	 * @param string $value
 	 */
 	protected function setTag(string $value)
