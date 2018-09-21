@@ -260,6 +260,11 @@ class Element implements \ArrayAccess
 		unset($this->children[$offset]);
 	}
 
+	public function getChildren()
+    {
+        return $this->children;
+    }
+
 	// Interface implementation
 
 	/**
