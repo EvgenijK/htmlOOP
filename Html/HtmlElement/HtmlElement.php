@@ -10,6 +10,7 @@ namespace htmlOOP\Html\HtmlElement;
 
 use htmlOOP\Element\Element;
 use htmlOOP\Html\HtmlElementCollection\HtmlElementCollection;
+use htmlOOP\Html\HtmlRenderer\HtmlRenderer;
 
 class HtmlElement extends Element
 {
@@ -84,12 +85,32 @@ class HtmlElement extends Element
 		$this->data[$attribute] = (string) $value;
 	}
 
+	// Tag
+
 	/**
 	 * @param string $value
 	 */
 	protected function setTag(string $value)
 	{
 		$this->tag = $value;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTag()
+	{
+		return $this->tag;
+	}
+
+	// Type
+
+	/**
+	 * @return string
+	 */
+	public function getType()
+	{
+		return $this->element_type;
 	}
 
 	protected function setElementTypeStandard()
@@ -105,6 +126,13 @@ class HtmlElement extends Element
 	protected function setElementTypeText()
 	{
 		$this->element_type = self::ELEMENT_TYPE_TEXT;
+	}
+
+	// Render
+
+	public function htmlRender()
+	{
+		HtmlRenderer::render($this);
 	}
 
 }
