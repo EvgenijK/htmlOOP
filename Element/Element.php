@@ -151,36 +151,6 @@ class Element implements \ArrayAccess
 		return $this->parent;
 	}
 
-	// Index
-
-	protected function compareIndex(ElementCollection $additional_index)
-	{
-		if (!array_intersect_key($this->getIndex()->getElements(), $additional_index->getElements()))
-		{
-			return FALSE;
-		}
-
-		return TRUE;
-	}
-
-	/**
-	 * @param string  $id
-	 *
-	 * @throws \Exception
-	 */
-	public function setId(string $id)
-	{
-		if ($this->checkId($id))
-		{
-			throw new \Exception('There is already an element with the same id in index');
-		}
-
-		$this->index[$id] = $this;
-
-		$this->data[self::SPECIAL_DATA_ID] = $id;
-		$this->id = $id;
-	}
-
 	// Children
 
 	/**
