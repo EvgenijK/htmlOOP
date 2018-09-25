@@ -223,8 +223,8 @@ class Element implements \ArrayAccess
 
 		$this->root = $root;
 
+		$this->setIndex($newIndex);
 		$root->addIndex($this);
-		$this->setIndex($root->getIndex());
 	}
 
 	/**
@@ -270,7 +270,7 @@ class Element implements \ArrayAccess
 	/**
 	 * @param bool $unset_tree
 	 *
-	 * @return array|bool
+	 * @return Element[]|bool
 	 * @throws \Exception
 	 */
 	public function unsetElement(bool $unset_tree = FALSE)
@@ -278,8 +278,6 @@ class Element implements \ArrayAccess
 		// remove from parent
 		if ($this->parent !== $this)
 		{
-			echo 'unset:: paren id = ' . $this->parent->getId() . PHP_EOL;
-
 			for ($i = 0; $i < count($this->parent->getChildren()); ++$i)
 			{
 				if ($this->parent[$i] === $this)
@@ -301,6 +299,11 @@ class Element implements \ArrayAccess
 		// remove root
 		unset($this->root);
 
+		if (!$unset_tree)
+		{
+			$children = $this->getChildren()->getElements();
+		}
+
 		// unset/update children
 		foreach ($this->children as $child)
 		{
@@ -312,10 +315,7 @@ class Element implements \ArrayAccess
 			}
 		}
 
-		if (!$unset_tree)
-		{
-			$children = $this->children->getElements();
-		}
+
 
 		$this->children = NULL;
 
