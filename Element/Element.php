@@ -265,7 +265,76 @@ class Element implements \ArrayAccess
         return $this->children;
     }
 
-	// Interface implementation
+    // Unset
+
+    /**
+     * @param bool $unset_tree
+     *
+     * @return array|bool
+     * @throws \Exception
+     */
+    public function unsetElement(bool $unset_tree = FALSE)
+    {
+        // remove from index
+        if ($this->getId())
+        {
+            unset($this->index[$this->getId()]);
+        }
+
+        // remove from parent
+        if ($this->parent !== $this)
+        {
+            foreach ($this->parent->getChildren() as &$parentChildren)
+            {
+                if ($parentChildren === $this)
+                {
+                    unset($parentChildren);
+                }
+            }
+        }
+
+        // remove parent
+        unset($this->parent);
+
+        // remove root
+        unset($this->root);
+
+        // unset/update children
+        foreach ($this->children as $child)
+        {
+            if ($unset_tree)
+            {
+                $child->unsetElement(TRUE);
+            } else {
+                $child->updateTree($child, new ElementCollection($child));
+            }
+        }
+
+        if (!$unset_tree)
+        {
+            $children = $this->children->getElements();
+        }
+
+        $this->children = NULL;
+
+        if (!$unset_tree)
+        {
+            return $children;
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function __destruct()
+    {
+        $this->unsetElement(TRUE);
+    }
+
+
+    // Interface implementation
 
 	/**
 	 * Whether a offset exists
