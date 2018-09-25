@@ -223,8 +223,8 @@ class Element implements \ArrayAccess
 
 		$this->root = $root;
 
+		$this->setIndex($newIndex);
 		$root->addIndex($this);
-		$this->setIndex($root->getIndex());
 	}
 
 	/**
@@ -261,9 +261,71 @@ class Element implements \ArrayAccess
 	}
 
 	public function getChildren()
-    {
-        return $this->children;
-    }
+	{
+		return $this->children;
+	}
+
+	// Unset
+
+	/**
+	 * @param bool $unset_tree
+	 *
+	 * @return Element[]|bool
+	 * @throws \Exception
+	 */
+	public function unsetElement(bool $unset_tree = FALSE)
+	{
+		// remove from parent
+		if ($this->parent !== $this)
+		{
+			for ($i = 0; $i < count($this->parent->getChildren()); ++$i)
+			{
+				if ($this->parent[$i] === $this)
+				{
+					unset($this->parent[$i]);
+				}
+			}
+		}
+
+		// remove from index
+		if ($this->getId())
+		{
+			unset($this->index[$this->getId()]);
+		}
+
+		// remove parent
+		unset($this->parent);
+
+		// remove root
+		unset($this->root);
+
+		if (!$unset_tree)
+		{
+			$children = $this->getChildren()->getElements();
+		}
+
+		// unset/update children
+		foreach ($this->children as $child)
+		{
+			if ($unset_tree)
+			{
+				$child->unsetElement(TRUE);
+			} else {
+				$child->updateTree($child, new ElementCollection($child));
+			}
+		}
+
+
+
+		$this->children = NULL;
+
+		if (!$unset_tree)
+		{
+			return $children;
+		}
+
+		return TRUE;
+	}
 
 	// Interface implementation
 
