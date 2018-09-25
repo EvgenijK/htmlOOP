@@ -261,80 +261,73 @@ class Element implements \ArrayAccess
 	}
 
 	public function getChildren()
-    {
-        return $this->children;
-    }
+	{
+		return $this->children;
+	}
 
-    // Unset
+	// Unset
 
-    /**
-     * @param bool $unset_tree
-     *
-     * @return array|bool
-     * @throws \Exception
-     */
-    public function unsetElement(bool $unset_tree = FALSE)
-    {
-        // remove from index
-        if ($this->getId())
-        {
-            unset($this->index[$this->getId()]);
-        }
+	/**
+	 * @param bool $unset_tree
+	 *
+	 * @return array|bool
+	 * @throws \Exception
+	 */
+	public function unsetElement(bool $unset_tree = FALSE)
+	{
+		// remove from parent
+		if ($this->parent !== $this)
+		{
+			echo 'unset:: paren id = ' . $this->parent->getId() . PHP_EOL;
 
-        // remove from parent
-        if ($this->parent !== $this)
-        {
-            foreach ($this->parent->getChildren() as &$parentChildren)
-            {
-                if ($parentChildren === $this)
-                {
-                    unset($parentChildren);
-                }
-            }
-        }
+			for ($i = 0; $i < count($this->parent->getChildren()); ++$i)
+			{
+				if ($this->parent[$i] === $this)
+				{
+					unset($this->parent[$i]);
+				}
+			}
+		}
 
-        // remove parent
-        unset($this->parent);
+		// remove from index
+		if ($this->getId())
+		{
+			unset($this->index[$this->getId()]);
+		}
 
-        // remove root
-        unset($this->root);
+		// remove parent
+		unset($this->parent);
 
-        // unset/update children
-        foreach ($this->children as $child)
-        {
-            if ($unset_tree)
-            {
-                $child->unsetElement(TRUE);
-            } else {
-                $child->updateTree($child, new ElementCollection($child));
-            }
-        }
+		// remove root
+		unset($this->root);
 
-        if (!$unset_tree)
-        {
-            $children = $this->children->getElements();
-        }
+		// unset/update children
+		foreach ($this->children as $child)
+		{
+			if ($unset_tree)
+			{
+				$child->unsetElement(TRUE);
+			} else {
+				$child->updateTree($child, new ElementCollection($child));
+			}
+		}
 
-        $this->children = NULL;
+		if (!$unset_tree)
+		{
+			$children = $this->children->getElements();
+		}
 
-        if (!$unset_tree)
-        {
-            return $children;
-        }
+		$this->children = NULL;
 
-        return TRUE;
-    }
+		if (!$unset_tree)
+		{
+			return $children;
+		}
 
-    /**
-     * @throws \Exception
-     */
-    public function __destruct()
-    {
-        $this->unsetElement(TRUE);
-    }
+		return TRUE;
+	}
 
-
-    // Interface implementation
+	// Interface implementation
 
 	/**
 	 * Whether a offset exists
