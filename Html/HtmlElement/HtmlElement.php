@@ -27,21 +27,9 @@ class HtmlElement extends Element
 	protected $element_type;
 
 	/**
-	 * Unique id in the structure
-	 *
-	 * @var string $id
-	 */
-	protected $id;
-
-	/**
 	 * @var string $tag
 	 */
 	protected $tag;
-
-	/**
-	 * @var HtmlElementCollection $indexed_elements
-	 */
-	protected $indexed_elements;
 
 	/**
 	 * HtmlElement constructor.
@@ -53,11 +41,12 @@ class HtmlElement extends Element
 	 */
 	public function __construct(array $data = [], HtmlElement ...$children)
 	{
-		$this->specialData[] = HtmlElement::SPECIAL_DATA_ID;
 		$this->specialData[] = HtmlElement::SPECIAL_DATA_TAG;
 
 		parent::__construct($data, ...$children);
 	}
+
+	// Data
 
 	/**
 	 * @param        $index
