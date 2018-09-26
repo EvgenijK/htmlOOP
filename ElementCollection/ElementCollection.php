@@ -22,16 +22,20 @@ class ElementCollection implements \ArrayAccess, \IteratorAggregate, \Countable
 	/**
 	 * @var Element $owner
 	 */
-	protected $owner;
+	protected $owner = null;
 
 	/**
 	 * ElementCollection constructor.
 	 *
 	 * @param Element $owner
 	 */
-	public function __construct(Element $owner)
+	public function __construct(Element $owner = null)
 	{
-		$this->owner = $owner;
+		if ($owner instanceof Element)
+		{
+			$this->owner = $owner;
+		}
+
 		$this->elements = [];
 	}
 
@@ -49,14 +53,6 @@ class ElementCollection implements \ArrayAccess, \IteratorAggregate, \Countable
 	public function getElements()
 	{
 		return $this->elements;
-	}
-
-	/**
-	 * @param ElementCollection $collection
-	 */
-	public function merge_collection(ElementCollection $collection)
-	{
-		array_merge($this->elements, $collection->getElements());
 	}
 
 	/**
@@ -140,17 +136,17 @@ class ElementCollection implements \ArrayAccess, \IteratorAggregate, \Countable
 		return new \ArrayIterator($this->elements);
 	}
 
-    /**
-     * Count elements of an object
-     * @link  https://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
-     * @since 5.1.0
-     */
-    public function count()
-    {
-        return count($this->elements);
-    }
+	/**
+	 * Count elements of an object
+	 * @link  https://php.net/manual/en/countable.count.php
+	 * @return int The custom count as an integer.
+	 * </p>
+	 * <p>
+	 * The return value is cast to an integer.
+	 * @since 5.1.0
+	 */
+	public function count()
+	{
+		return count($this->elements);
+	}
 }

@@ -45,7 +45,7 @@ class Element implements \ArrayAccess
 
 		$this->children = new ElementCollection($this);
 
-		$this->addChildren(...$children);
+		$this->appendChildren(...$children);
 	}
 
 	// Children
@@ -99,7 +99,7 @@ class Element implements \ArrayAccess
 	 *
 	 * @throws \Exception
 	 */
-	public function addChildren(...$elements)
+	public function appendChildren(...$elements)
 	{
 		foreach ($elements as $element)
 		{
@@ -112,19 +112,16 @@ class Element implements \ArrayAccess
 	 *
 	 * @param Element $element
 	 * @param int     $offset
+	 *
+	 * @return Element|null
 	 */
 	public function setChild(int $offset, Element $element)
 	{
+		$previous_child = $this->children[$offset]
 		$this->children[$offset] = $element;
 		$element->setParent($this);
-	}
 
-	/**
-	 * @param int $offset
-	 */
-	public function unsetChild(int $offset)
-	{
-		unset($this->children[$offset]);
+		return $previous_child;
 	}
 
 	public function getChildren()
@@ -268,6 +265,6 @@ class Element implements \ArrayAccess
 	 */
 	public function offsetUnset($offset)
 	{
-		$this->unsetChild($offset);
+		unset($this->children[$offset]);
 	}
 }
