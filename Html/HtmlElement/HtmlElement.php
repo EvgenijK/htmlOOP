@@ -9,11 +9,13 @@
 namespace htmlOOP\Html\HtmlElement;
 
 use htmlOOP\Element\Element;
-use htmlOOP\Html\HtmlElementCollection\HtmlElementCollection;
+use htmlOOP\Html\HtmlElement\Traits\TraitHtmlElementTag;
+
 use htmlOOP\Html\HtmlRenderer\HtmlRenderer;
 
 class HtmlElement extends Element
 {
+	use TraitHtmlElementTag;
 
 	const SPECIAL_DATA_TAG = 'tag';
 
@@ -25,11 +27,6 @@ class HtmlElement extends Element
 	 * @var string $element_type
 	 */
 	protected $element_type;
-
-	/**
-	 * @var string $tag
-	 */
-	protected $tag;
 
 	/**
 	 * HtmlElement constructor.
@@ -73,24 +70,6 @@ class HtmlElement extends Element
 	public function setAttribute(string $attribute, $value)
 	{
 		$this->data[$attribute] = (string) $value;
-	}
-
-	// Tag
-
-	/**
-	 * @param string $value
-	 */
-	protected function setTag(string $value)
-	{
-		$this->tag = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTag()
-	{
-		return $this->tag;
 	}
 
 	// Type
