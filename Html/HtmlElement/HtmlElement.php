@@ -46,30 +46,12 @@ class HtmlElement extends Element
 	// Data
 
 	/**
-	 * @param        $index
-	 * @param string $value
-	 */
-	public function setData($index, string $value)
-	{
-		if (!$this->setSpecialData($index, $value))
-		{
-			if (is_int($index) && !empty((string) $value))
-			{
-				$this->setAttribute($value, '');
-			} else
-			{
-				$this->setAttribute($index, $value);
-			}
-		}
-	}
-
-	/**
 	 * @param string $attribute
 	 * @param        $value - Will be converted to a string by (string)
 	 */
 	public function setAttribute(string $attribute, $value)
 	{
-		$this->data[$attribute] = (string) $value;
+		$this->setData($attribute, $value);
 	}
 
 	// Type
