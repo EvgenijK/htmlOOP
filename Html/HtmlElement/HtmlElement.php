@@ -18,8 +18,8 @@ class HtmlElement extends Element
 	const SPECIAL_DATA_TAG = 'tag';
 
 	const ELEMENT_TYPE_STANDARD = 'standard';
-	const ELEMENT_TYPE_EMPTY    = 'empty';
-	const ELEMENT_TYPE_TEXT     = 'text';
+	const ELEMENT_TYPE_EMPTY = 'empty';
+	const ELEMENT_TYPE_TEXT = 'text';
 
 	/**
 	 * @var string $element_type
@@ -59,7 +59,8 @@ class HtmlElement extends Element
 			if (is_int($index) && !empty((string) $value))
 			{
 				$this->setAttribute($value, '');
-			} else {
+			} else
+			{
 				$this->setAttribute($index, $value);
 			}
 		}

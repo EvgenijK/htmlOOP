@@ -67,7 +67,7 @@ trait TraitElementIndex
 	}
 
 	/**
-	 * @param string  $id
+	 * @param string $id
 	 *
 	 * @throws \Exception
 	 */
