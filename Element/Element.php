@@ -6,18 +6,15 @@ use htmlOOP\ElementCollection\ElementCollection;
 
 use htmlOOP\Element\Traits\TraitRootElement;
 use htmlOOP\Element\Traits\TraitElementIndex;
+use htmlOOP\Element\Traits\TraitParentElement;
 
 class Element implements \ArrayAccess
 {
 	use TraitRootElement;
 	use TraitElementIndex;
+	use TraitParentElement;
 
 	const SPECIAL_DATA_ID  = 'id';
-
-	/**
-	 * @var Element $parent
-	 */
-	protected $parent;
 
 	/**
 	 * @var array $data
@@ -131,24 +128,6 @@ class Element implements \ArrayAccess
 	public function getAllData()
 	{
 		return $this->data;
-	}
-
-	// Parent
-
-	/**
-	 * @param Element $parent
-	 */
-	protected function setParent(Element $parent)
-	{
-		$this->parent = $parent;
-	}
-
-	/**
-	 * @return Element
-	 */
-	public function getParent()
-	{
-		return $this->parent;
 	}
 
 	// Children
