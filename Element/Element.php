@@ -16,7 +16,7 @@ class Element implements \ArrayAccess
 	use TraitParentElement;
 	use TraitElementData;
 
-	const SPECIAL_DATA_ID  = 'id';
+	const SPECIAL_DATA_ID = 'id';
 
 	/**
 	 * @var ElementCollection $children
@@ -113,15 +113,24 @@ class Element implements \ArrayAccess
 	 * @param Element $element
 	 * @param int     $offset
 	 *
-	 * @return Element|null
+	 * @return bool|Element
 	 */
 	public function setChild(int $offset, Element $element)
 	{
-		$previous_child = $this->children[$offset]
+		if (isset($this->children[$offset]))
+		{
+			$previous_child = $this->children[$offset];
+		}
+
 		$this->children[$offset] = $element;
 		$element->setParent($this);
 
-		return $previous_child;
+		if (isset($previous_child))
+		{
+			return $previous_child;
+		}
+
+		return TRUE;
 	}
 
 	public function getChildren()
@@ -174,7 +183,8 @@ class Element implements \ArrayAccess
 			if ($unset_tree)
 			{
 				$child->unsetElement(TRUE);
-			} else {
+			} else
+			{
 				$child->updateTree($child, new ElementCollection($child));
 			}
 		}
