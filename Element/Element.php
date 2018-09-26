@@ -7,24 +7,16 @@ use htmlOOP\ElementCollection\ElementCollection;
 use htmlOOP\Element\Traits\TraitRootElement;
 use htmlOOP\Element\Traits\TraitElementIndex;
 use htmlOOP\Element\Traits\TraitParentElement;
+use htmlOOP\Element\Traits\TraitElementData;
 
 class Element implements \ArrayAccess
 {
 	use TraitRootElement;
 	use TraitElementIndex;
 	use TraitParentElement;
+	use TraitElementData;
 
 	const SPECIAL_DATA_ID  = 'id';
-
-	/**
-	 * @var array $data
-	 */
-	protected $data;
-
-	/**
-	 * @var string[] $specialData
-	 */
-	protected $specialData = [];
 
 	/**
 	 * @var ElementCollection $children
@@ -54,80 +46,6 @@ class Element implements \ArrayAccess
 		$this->children = new ElementCollection($this);
 
 		$this->addChildren(...$children);
-	}
-
-	// Data
-
-	/**
-	 * @param string $value
-	 */
-	public function addData(string $value)
-	{
-		$this->data[] = $value;
-	}
-
-	/**
-	 * @param $index
-	 * @param $value
-	 */
-	public function setData($index, $value)
-	{
-		if (!$this->setSpecialData($index, $value))
-		{
-			if (is_int($index) && !empty((string) $value))
-			{
-				$this->data[$index] = $value;
-			} else {
-				$this->data[$value] = '';
-			}
-		}
-
-		$this->data[$index] = $value;
-	}
-
-	/**
-	 * @param        $index
-	 * @param string $value
-	 *
-	 * @return bool
-	 */
-	protected function setSpecialData($index, string $value)
-	{
-		if (in_array($index, $this->specialData, TRUE))
-		{
-			$setMethodName = 'set' . ucfirst($index);
-			$this->$setMethodName($value);
-
-			return TRUE;
-		}
-
-		return FALSE;
-	}
-
-	/**
-	 * @param array $new_data
-	 */
-	public function setAllData(array $new_data)
-	{
-		$this->data = $new_data;
-	}
-
-	/**
-	 * @param $index
-	 *
-	 * @return mixed
-	 */
-	public function getData($index)
-	{
-		return $this->data[$index];
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getAllData()
-	{
-		return $this->data;
 	}
 
 	// Children
@@ -263,8 +181,6 @@ class Element implements \ArrayAccess
 				$child->updateTree($child, new ElementCollection($child));
 			}
 		}
-
-
 
 		$this->children = NULL;
 
