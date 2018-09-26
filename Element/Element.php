@@ -51,30 +51,6 @@ class Element implements \ArrayAccess
 	// Children
 
 	/**
-	 * @param Element $element
-	 *
-	 * @throws \Exception
-	 */
-	public function append(Element $element)
-	{
-		if ($element->getRoot() !== $element)
-		{
-			// TODO: create specific class exception for this
-			throw new \Exception('Appending element that isn\'t the root of it\'s tree');
-		}
-
-		if ($this->compareIndex($element->getIndex()))
-		{
-			// TODO: create specific class exception for this
-			throw new \Exception('Appending element tree that has elements with same id as elements from parent tree');
-		}
-
-		$this->children[] = $element;
-		$element->setParent($this);
-		$element->updateTree($this->getRoot(), $this->getIndex());
-	}
-
-	/**
 	 * @param Element           $root
 	 * @param ElementCollection $newIndex
 	 *
@@ -103,27 +79,56 @@ class Element implements \ArrayAccess
 	{
 		foreach ($elements as $element)
 		{
-			$this->append($element);
+			$this[] = $element;
 		}
 	}
 
 	/**
-	 * TODO Rework this method to work with id and root update
-	 *
 	 * @param Element $element
-	 * @param int     $offset
+	 * @param         $offset
 	 *
 	 * @return bool|Element
+	 * @throws \Exception
 	 */
-	public function setChild(int $offset, Element $element)
+	public function setChild($offset, Element $element)
 	{
+		if (!is_int($offset) && !is_null($offset))
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Offset must be int type');
+		} elseif ($offset > count($this->data))
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Offset must be lower then count of elements in collection + 1');
+		}
+
+		if ($element->getRoot() !== $element)
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Appending element that isn\'t the root of it\'s tree');
+		}
+
+		if ($this->compareIndex($element->getIndex()))
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Appending element tree that has elements with same id as elements from parent tree');
+		}
+
 		if (isset($this->children[$offset]))
 		{
 			$previous_child = $this->children[$offset];
 		}
 
-		$this->children[$offset] = $element;
 		$element->setParent($this);
+		$element->updateTree($this->getRoot(), $this->getIndex());
+
+		if ($offset)
+		{
+			$this->children[$offset] = $element;
+		} else
+		{
+			$this->children[] = $element;
+		}
 
 		if (isset($previous_child))
 		{
@@ -253,13 +258,7 @@ class Element implements \ArrayAccess
 	 */
 	public function offsetSet($offset, $value)
 	{
-		if (is_null($offset))
-		{
-			$this->append($value);
-		} else
-		{
-			$this->setChild($offset, $value);
-		}
+		$this->setChild($offset, $value);
 	}
 
 	/**
