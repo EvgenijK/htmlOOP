@@ -6,28 +6,17 @@ use htmlOOP\ElementCollection\ElementCollection;
 
 use htmlOOP\Element\Traits\TraitRootElement;
 use htmlOOP\Element\Traits\TraitElementIndex;
+use htmlOOP\Element\Traits\TraitParentElement;
+use htmlOOP\Element\Traits\TraitElementData;
 
 class Element implements \ArrayAccess
 {
 	use TraitRootElement;
 	use TraitElementIndex;
+	use TraitParentElement;
+	use TraitElementData;
 
-	const SPECIAL_DATA_ID  = 'id';
-
-	/**
-	 * @var Element $parent
-	 */
-	protected $parent;
-
-	/**
-	 * @var array $data
-	 */
-	protected $data;
-
-	/**
-	 * @var string[] $specialData
-	 */
-	protected $specialData = [];
+	const SPECIAL_DATA_ID = 'id';
 
 	/**
 	 * @var ElementCollection $children
@@ -56,156 +45,10 @@ class Element implements \ArrayAccess
 
 		$this->children = new ElementCollection($this);
 
-		$this->addChildren(...$children);
-	}
-
-	// Data
-
-	/**
-	 * @param string $value
-	 */
-	public function addData(string $value)
-	{
-		$this->data[] = $value;
-	}
-
-	/**
-	 * @param $index
-	 * @param $value
-	 */
-	public function setData($index, $value)
-	{
-		if (!$this->setSpecialData($index, $value))
-		{
-			if (is_int($index) && !empty((string) $value))
-			{
-				$this->data[$index] = $value;
-			} else {
-				$this->data[$value] = '';
-			}
-		}
-
-		$this->data[$index] = $value;
-	}
-
-	/**
-	 * @param        $index
-	 * @param string $value
-	 *
-	 * @return bool
-	 */
-	protected function setSpecialData($index, string $value)
-	{
-		if (in_array($index, $this->specialData, TRUE))
-		{
-			$setMethodName = 'set' . ucfirst($index);
-			$this->$setMethodName($value);
-
-			return TRUE;
-		}
-
-		return FALSE;
-	}
-
-	/**
-	 * @param array $new_data
-	 */
-	public function setAllData(array $new_data)
-	{
-		$this->data = $new_data;
-	}
-
-	/**
-	 * @param $index
-	 *
-	 * @return mixed
-	 */
-	public function getData($index)
-	{
-		return $this->data[$index];
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getAllData()
-	{
-		return $this->data;
-	}
-
-	// Parent
-
-	/**
-	 * @param Element $parent
-	 */
-	protected function setParent(Element $parent)
-	{
-		$this->parent = $parent;
-	}
-
-	/**
-	 * @return Element
-	 */
-	public function getParent()
-	{
-		return $this->parent;
-	}
-
-	// Index
-
-	protected function compareIndex(ElementCollection $additional_index)
-	{
-		if (!array_intersect_key($this->getIndex()->getElements(), $additional_index->getElements()))
-		{
-			return FALSE;
-		}
-
-		return TRUE;
-	}
-
-	/**
-	 * @param string  $id
-	 *
-	 * @throws \Exception
-	 */
-	public function setId(string $id)
-	{
-		if ($this->checkId($id))
-		{
-			throw new \Exception('There is already an element with the same id in index');
-		}
-
-		$this->index[$id] = $this;
-
-		$this->data[self::SPECIAL_DATA_ID] = $id;
-		$this->id = $id;
+		$this->appendChildren(...$children);
 	}
 
 	// Children
-
-	/**
-	 * @param Element $element
-	 *
-	 * @throws \Exception
-	 */
-	public function append(Element $element)
-	{
-		if ($element->getRoot() !== $element)
-		{
-			// TODO: create specific class exception for this
-			throw new \Exception('Appending element that isn\'t the root of it\'s tree');
-		}
-
-		if ($this->compareIndex($element->getIndex()))
-		{
-			// TODO: create specific class exception for this
-			throw new \Exception('Appending element tree that has elements with same id as elements from parent tree');
-		}
-
-		$this->children[] = $element;
-		$element->setParent($this);
-		$element->updateTree($this->getRoot(), $this->getIndex());
-	}
 
 	/**
 	 * @param Element           $root
@@ -232,32 +75,67 @@ class Element implements \ArrayAccess
 	 *
 	 * @throws \Exception
 	 */
-	public function addChildren(...$elements)
+	public function appendChildren(...$elements)
 	{
 		foreach ($elements as $element)
 		{
-			$this->append($element);
+			$this[] = $element;
 		}
 	}
 
 	/**
-	 * TODO Rework this method to work with id and root update
-	 *
 	 * @param Element $element
-	 * @param int     $offset
+	 * @param         $offset
+	 *
+	 * @return bool|Element
+	 * @throws \Exception
 	 */
-	public function setChild(int $offset, Element $element)
+	public function setChild($offset, Element $element)
 	{
-		$this->children[$offset] = $element;
-		$element->setParent($this);
-	}
+		if (!is_int($offset) && !is_null($offset))
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Offset must be int type');
+		} elseif ($offset > count($this->data))
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Offset must be lower then count of elements in collection + 1');
+		}
 
-	/**
-	 * @param int $offset
-	 */
-	public function unsetChild(int $offset)
-	{
-		unset($this->children[$offset]);
+		if ($element->getRoot() !== $element)
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Appending element that isn\'t the root of it\'s tree');
+		}
+
+		if ($this->compareIndex($element->getIndex()))
+		{
+			// TODO: create specific class exception for this
+			throw new \Exception('Appending element tree that has elements with same id as elements from parent tree');
+		}
+
+		if (isset($this->children[$offset]))
+		{
+			$previous_child = $this->children[$offset];
+		}
+
+		$element->setParent($this);
+		$element->updateTree($this->getRoot(), $this->getIndex());
+
+		if ($offset)
+		{
+			$this->children[$offset] = $element;
+		} else
+		{
+			$this->children[] = $element;
+		}
+
+		if (isset($previous_child))
+		{
+			return $previous_child;
+		}
+
+		return TRUE;
 	}
 
 	public function getChildren()
@@ -310,12 +188,11 @@ class Element implements \ArrayAccess
 			if ($unset_tree)
 			{
 				$child->unsetElement(TRUE);
-			} else {
+			} else
+			{
 				$child->updateTree($child, new ElementCollection($child));
 			}
 		}
-
-
 
 		$this->children = NULL;
 
@@ -381,13 +258,7 @@ class Element implements \ArrayAccess
 	 */
 	public function offsetSet($offset, $value)
 	{
-		if (is_null($offset))
-		{
-			$this->append($value);
-		} else
-		{
-			$this->setChild($offset, $value);
-		}
+		$this->setChild($offset, $value);
 	}
 
 	/**
@@ -403,6 +274,6 @@ class Element implements \ArrayAccess
 	 */
 	public function offsetUnset($offset)
 	{
-		$this->unsetChild($offset);
+		unset($this->children[$offset]);
 	}
 }

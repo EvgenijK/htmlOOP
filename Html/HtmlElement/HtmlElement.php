@@ -9,39 +9,24 @@
 namespace htmlOOP\Html\HtmlElement;
 
 use htmlOOP\Element\Element;
-use htmlOOP\Html\HtmlElementCollection\HtmlElementCollection;
+use htmlOOP\Html\HtmlElement\Traits\TraitHtmlElementTag;
+
 use htmlOOP\Html\HtmlRenderer\HtmlRenderer;
 
 class HtmlElement extends Element
 {
+	use TraitHtmlElementTag;
 
 	const SPECIAL_DATA_TAG = 'tag';
 
 	const ELEMENT_TYPE_STANDARD = 'standard';
-	const ELEMENT_TYPE_EMPTY    = 'empty';
-	const ELEMENT_TYPE_TEXT     = 'text';
+	const ELEMENT_TYPE_EMPTY = 'empty';
+	const ELEMENT_TYPE_TEXT = 'text';
 
 	/**
 	 * @var string $element_type
 	 */
 	protected $element_type;
-
-	/**
-	 * Unique id in the structure
-	 *
-	 * @var string $id
-	 */
-	protected $id;
-
-	/**
-	 * @var string $tag
-	 */
-	protected $tag;
-
-	/**
-	 * @var HtmlElementCollection $indexed_elements
-	 */
-	protected $indexed_elements;
 
 	/**
 	 * HtmlElement constructor.
@@ -53,28 +38,12 @@ class HtmlElement extends Element
 	 */
 	public function __construct(array $data = [], HtmlElement ...$children)
 	{
-		$this->specialData[] = HtmlElement::SPECIAL_DATA_ID;
 		$this->specialData[] = HtmlElement::SPECIAL_DATA_TAG;
 
 		parent::__construct($data, ...$children);
 	}
 
-	/**
-	 * @param        $index
-	 * @param string $value
-	 */
-	public function setData($index, string $value)
-	{
-		if (!$this->setSpecialData($index, $value))
-		{
-			if (is_int($index) && !empty((string) $value))
-			{
-				$this->setAttribute($value, '');
-			} else {
-				$this->setAttribute($index, $value);
-			}
-		}
-	}
+	// Data
 
 	/**
 	 * @param string $attribute
@@ -82,25 +51,7 @@ class HtmlElement extends Element
 	 */
 	public function setAttribute(string $attribute, $value)
 	{
-		$this->data[$attribute] = (string) $value;
-	}
-
-	// Tag
-
-	/**
-	 * @param string $value
-	 */
-	protected function setTag(string $value)
-	{
-		$this->tag = $value;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTag()
-	{
-		return $this->tag;
+		$this->setData($attribute, $value);
 	}
 
 	// Type

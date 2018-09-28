@@ -35,7 +35,7 @@ try
 		new HtmlElement(['tag' => 'div','id' => 'old_el_3'])
 	);
 
-	$test_element[0]->addChildren($test_element_2);
+	$test_element[1][] = $test_element_2;
 //	var_dump($test_element_2[1]->getRoot()->getIndexKeys());
 //	var_dump($test_element_2[1]->getIndex()['inner_1_2_2']->getId());
 //	var_dump($test_element->getById('old_el_3')->getParent()->getId());
